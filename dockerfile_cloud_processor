@@ -15,5 +15,5 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y  python3-opencv python3-pip vim-tiny mosquitto-clients libopencv-dev
 RUN apt-get update
 RUN pip3 install paho-mqtt
-RUN pip3 install --upgrade s3cmd
+#RUN pip3 install --upgrade s3cmd
 WORKDIR /
