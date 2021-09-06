@@ -1,34 +1,34 @@
 import paho.mqtt.client as mqtt
-from cv2 import imdecode, IMREAD_COLOR, imwrite
+import cv2
 import numpy as np
 from os import system
+import sys
 
-LOCAL_MQTT_HOST="mqtt_broker"
-LOCAL_MQTT_PORT=1883
-LOCAL_MQTT_TOPIC="homework3"
+# define local client
+CLOUD_MQTT_HOST="cloud_mqtt_broker"
+CLOUD_MQTT_PORT=1883
+CLOUD_MQTT_TOPIC="face_detect"
 
-def on_connect_local(client, userdata, flags, rc):
-        print("connected to local broker with rc: " + str(rc))
-        client.subscribe(LOCAL_MQTT_TOPIC)
+def on_connect_cloud(client, userdata, flags, rc):
+        print("connected to cloud broker with rc: " + str(rc))
+        client.subscribe(CLOUD_MQTT_TOPIC)
 	
 
-def on_message_local(client, userdata, msg):
+def on_message_cloud(client, userdata, msg):
   try:
-    i = int(msg.payload[0])   # get message number
-    png = msg.payload[1:]
-    print(str(i) + "th message received locally!")	    
-    #png_new = imdecode(np.fromstring(png, dtype=np.uint8),IMREAD_COLOR)
-    #imwrite('/home/faces/face_' + str(i) + '.png', png_new)
-    print(str(i) + "th message saved to png!")
-    #system('s3cmd sync /home/faces/ s3://251hw03mz/')
-    print(str(i) + "th message synced to s3!")
+    #i = int(msg.payload[0])   # get message number
+    jpg_msg = msg.payload
+    print("Received message with size" {}".format(len(jpg_msg)))	    
+    jpg_img = cv2.imdecode(np.frombuffer(jpg_msg, dtype='uint8'),cv2.IMREAD_COLOR)
+    cv2.imwrite('/home/s3fs_data/face.jpg', jpg_img)
+   
   except:
     print("Unexpected error:", sys.exc_info()[0])
 
+#start cloud client
+cloud_mqttclient = mqtt.Client()
+cloud_mqttclient.on_connect = on_connect_cloud
+cloud_mqttclient.connect(CLOUD_MQTT_HOST, CLOUD_MQTT_PORT, 60)
+cloud_mqttclient.on_message = on_message_cloud
 
-local_mqttclient = mqtt.Client()
-local_mqttclient.on_connect = on_connect_local
-local_mqttclient.connect(LOCAL_MQTT_HOST, LOCAL_MQTT_PORT, 60)
-local_mqttclient.on_message = on_message_local
-
-local_mqttclient.loop_forever()
+cloud_mqttclient.loop_forever()
