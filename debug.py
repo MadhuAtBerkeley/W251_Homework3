@@ -71,10 +71,4 @@ msg = "test_msg" # png.tobytes()
 # send it to broker
 local_mqttclient.publish(LOCAL_MQTT_TOPIC, payload = str(i) + msg, qos = 0, retain = False)
 
-# png_new = np.frombuffer(msg, np.uint8)
-# png_new = np.reshape(png_new, newshape = (png_new.size, 1))
-# png_new = cv2.imdecode(png_new, cv2.IMREAD_COLOR)
-
-png_new = face #cv2.imdecode(np.fromstring(msg, dtype=np.uint8),cv2.IMREAD_COLOR)
-cv2.imwrite('/home/debug_new.png', png_new)
 
