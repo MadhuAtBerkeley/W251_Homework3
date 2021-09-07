@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mqttrecv-deployment
+spec:
+  selector:
+    matchLabels:
+      app: mqttreceiver
+  replicas: 1 # tells deployment to run 1 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: mqttreceiver
+    spec:
+      containers:
+      - name: mqttreceiver
+        image: mqtt_receiver:v1

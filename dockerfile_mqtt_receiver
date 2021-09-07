@@ -1,0 +1,17 @@
+FROM ubuntu:latest
+
+
+RUN apt update 
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+
+RUN apt-get install -y python3-opencv python3-pip vim-tiny mosquitto-clients libopencv-dev
+RUN pip3 install paho-mqtt
+
+
+WORKDIR /
+COPY mqtt_receiver.py mqtt_receiver.py
+#COPY mqtt_receiver.sh mqtt_receiver.sh
+CMD python3 ./mqtt_receiver.py
